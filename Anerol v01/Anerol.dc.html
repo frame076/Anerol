@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    @keyframes anerol-arrow-blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    body { margin: 0; background: #FDF9F4; }
+    * { box-sizing: border-box; }
+    a { color: #4A3C30; text-decoration: none; }
+    a:hover { color: #C8A97E; }
+    ::selection { background: #C8A97E; color: #FDF9F4; }
+  </style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position: relative; background: #FDF9F4; font-family: Inter, sans-serif; color: #4A3C30; overflow-x: hidden; cursor: {{ cursorCss }};">
+
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+    <div ref="{{ cursorRef }}" style="position: fixed; top: 0; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #C8A97E; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: normal; display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: 0.15em; color: #FDF9F4; font-family: Inter, sans-serif; white-space: nowrap;"></div>
+  </sc-if>
+
+  <!-- HEADER -->
+  <header style="position: fixed; top: 0; left: 0; right: 0; height: 72px; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(24px, 4vw, 48px); background: {{ headerBg }}; box-shadow: {{ headerShadow }}; transition: background 0.4s ease, box-shadow 0.4s ease;">
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 20px; letter-spacing: 0.35em; color: {{ logoColor }};">ANEROL</div>
+
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="background: none; border: none; padding: 8px; display: flex; flex-direction: column; gap: 5px; cursor: pointer;">
+        <span style="width: 20px; height: 1px; background: #4A3C30; display: block;"></span>
+        <span style="width: 20px; height: 1px; background: #4A3C30; display: block;"></span>
+        <span style="width: 20px; height: 1px; background: #4A3C30; display: block;"></span>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ isDesktopNav }}" hint-placeholder-val="{{ true }}">
+      <nav style="display: flex; align-items: center; gap: 36px;">
+        <a href="#nosaltres" style="font-size: 13px; letter-spacing: 0.05em; color: {{ navNosaltresColor }}; transition: color 0.3s;">{{ navNosaltres }}</a>
+        <a href="#serveis" style="font-size: 13px; letter-spacing: 0.05em; color: {{ navServeisColor }}; transition: color 0.3s;">{{ navServeis }}</a>
+        <a href="#colleccio" style="font-size: 13px; letter-spacing: 0.05em; color: {{ navColleccioColor }}; transition: color 0.3s;">{{ navColleccio }}</a>
+        <a href="#proces" style="font-size: 13px; letter-spacing: 0.05em; color: {{ navProcesColor }}; transition: color 0.3s;">{{ navProces }}</a>
+        <a href="#contacte" style="font-size: 13px; letter-spacing: 0.05em; color: {{ navContacteColor }}; transition: color 0.3s;">{{ navContacte }}</a>
+        <div style="display: flex; align-items: center; gap: 8px; margin-left: 12px;">
+          <button onClick="{{ setLangCa }}" style="background: none; border: none; padding: 0; font-family: Inter, sans-serif; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; color: {{ langCaColor }};">CA</button>
+          <div style="width: 1px; height: 12px; background: #A8957F;"></div>
+          <button onClick="{{ setLangEs }}" style="background: none; border: none; padding: 0; font-family: Inter, sans-serif; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; color: {{ langEsColor }};">ES</button>
+        </div>
+      </nav>
+    </sc-if>
+  </header>
+
+  <!-- MOBILE MENU OVERLAY -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: #FDF9F4; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;">
+      <button onClick="{{ toggleMenu }}" aria-label="Close" style="position: absolute; top: 24px; right: 24px; background: none; border: none; font-size: 28px; color: #4A3C30; cursor: pointer; font-family: 'Cormorant Garamond', serif;">&times;</button>
+      <a href="#nosaltres" onClick="{{ toggleMenu }}" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; color: #4A3C30; font-weight: 300;">{{ navNosaltres }}</a>
+      <a href="#serveis" onClick="{{ toggleMenu }}" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; color: #4A3C30; font-weight: 300;">{{ navServeis }}</a>
+      <a href="#colleccio" onClick="{{ toggleMenu }}" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; color: #4A3C30; font-weight: 300;">{{ navColleccio }}</a>
+      <a href="#proces" onClick="{{ toggleMenu }}" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; color: #4A3C30; font-weight: 300;">{{ navProces }}</a>
+      <a href="#contacte" onClick="{{ toggleMenu }}" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; color: #4A3C30; font-weight: 300;">{{ navContacte }}</a>
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button onClick="{{ setLangCa }}" style="background: none; border: none; font-size: 14px; letter-spacing: 0.1em; color: {{ langCaColor }};">CA</button>
+        <div style="width: 1px; height: 14px; background: #A8957F;"></div>
+        <button onClick="{{ setLangEs }}" style="background: none; border: none; font-size: 14px; letter-spacing: 0.1em; color: {{ langEsColor }};">ES</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- 01 HERO -->
+  <section style="position: relative; height: 100vh; min-height: 560px; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center;" data-screen-label="01 Hero">
+    <div ref="{{ heroImgRef }}" data-parallax style="position: absolute; inset: -10% 0 0 0; height: 120%;">
+      <img src="assets/hero-salon-cortinas.jpg" alt="Salón de doble altura con cortinas de lino natural del techo al suelo y luz lateral" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+    </div>
+    <div style="position: absolute; inset: 0; background: rgba(74,60,48,0.4);"></div>
+    <div data-reveal data-parallax style="position: relative; z-index: 3; text-align: center; padding: 0 24px; max-width: 900px;">
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(44px, 8vw, 96px); color: #FDF9F4; margin: 0; text-shadow: 0 2px 40px rgba(74,60,48,0.3); line-height: 1.1;">{{ heroTitle }}</h1>
+      <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #FDF9F4; opacity: 0.7; margin-top: 24px;">{{ heroSubtitle }}</div>
+    </div>
+    <a href="#nosaltres" data-reveal data-parallax style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: #FDF9F4; display: flex; align-items: center; gap: 8px;">
+      <span>{{ heroCta }}</span>
+      <span style="animation: anerol-arrow-blink 3s ease-in-out infinite;">&darr;</span>
+    </a>
+  </section>
+
+  <!-- 02 NOSALTRES -->
+  <section id="nosaltres" data-screen-label="02 Nosaltres" style="position: relative; padding: 140px 0; display: flex; flex-wrap: wrap; align-items: center; overflow: hidden;">
+    <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-family: 'Cormorant Garamond', serif; font-size: clamp(160px, 22vw, 280px); font-weight: 300; color: #4A3C30; opacity: 0.05; pointer-events: none; line-height: 1;">02</div>
+    <div data-reveal data-parallax style="flex: 1 1 480px; min-width: 320px; padding: 0 clamp(24px, 6vw, 96px); position: relative; z-index: 2;">
+      <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #A8957F;">{{ aboutEpigraph }}</div>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(36px, 5.5vw, 72px); margin: 20px 0 32px; line-height: 1.15; color: #4A3C30;">{{ aboutTitle }}</h2>
+      <div style="font-weight: 300; font-size: 15px; line-height: 1.9; color: #4A3C30; max-width: 480px; white-space: pre-line;">{{ aboutBody }}</div>
+    </div>
+    <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; aspect-ratio: 1/1; margin-left: auto; overflow: hidden; position: relative;">
+      <img src="assets/nosaltres-lounge-cortines.jpg" alt="Salón con cortinas de lino translúcidas, sillones de mimbre y vistas a la bahía" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+    </div>
+  </section>
+
+  <!-- 03 SERVEIS -->
+  <section id="serveis" data-screen-label="03 Serveis" style="position: relative; background: #F5EFE6; padding: 140px clamp(16px, 3vw, 48px); overflow: hidden;">
+    <div style="position: absolute; left: 50%; top: 60px; transform: translateX(-50%); font-family: 'Cormorant Garamond', serif; font-size: clamp(160px, 22vw, 280px); font-weight: 300; color: #4A3C30; opacity: 0.05; pointer-events: none; line-height: 1;">03</div>
+    <div data-reveal data-parallax style="text-align: center; max-width: 700px; margin: 0 auto 80px; position: relative; z-index: 1;">
+      <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #A8957F;">{{ servicesEpigraph }}</div>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(36px, 5.5vw, 72px); margin: 20px 0 28px; color: #4A3C30;">{{ servicesTitle }}</h2>
+      <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #A8957F; line-height: 1.5; margin: 0;">{{ servicesSubtitle }}</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 56px; max-width: 1440px; margin: 0 auto; position: relative; z-index: 1;">
+      <div data-reveal data-parallax>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 80px; color: #C8A97E; line-height: 1;">01</div>
+        <div data-parallax style="aspect-ratio: 1/1; overflow: hidden; margin: 20px 0 40px;">
+          <img src="assets/servei1-tracte-personalitzat.jpg" alt="Cliente y diseñador revisando muestras de tela en una mesa de mármol" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 26px; margin: 0 0 12px; color: #4A3C30;">{{ service1Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0;">{{ service1Body }}</p>
+      </div>
+      <div data-reveal data-parallax>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 80px; color: #C8A97E; line-height: 1;">02</div>
+        <div data-parallax style="aspect-ratio: 1/1; overflow: hidden; margin: 20px 0 40px;">
+          <img src="assets/servei2-mesura.jpg" alt="Profesional tomando medidas de una ventana con cinta métrica, luz natural" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 26px; margin: 0 0 12px; color: #4A3C30;">{{ service2Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0;">{{ service2Body }}</p>
+      </div>
+      <div data-reveal data-parallax>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 80px; color: #C8A97E; line-height: 1;">03</div>
+        <div data-parallax style="aspect-ratio: 1/1; overflow: hidden; margin: 20px 0 40px;">
+          <img src="assets/servei3-installacio.jpg" alt="Detalle de una mano ajustando el plisado de una cortina de lino recién instalada" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 26px; margin: 0 0 12px; color: #4A3C30;">{{ service3Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0;">{{ service3Body }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 COL·LECCIO -->
+  <section id="colleccio" data-screen-label="04 Col-leccio" style="position: relative; padding: 140px 0; overflow: hidden;">
+    <div style="position: absolute; right: 24px; top: 40px; font-family: 'Cormorant Garamond', serif; font-size: clamp(160px, 22vw, 280px); font-weight: 300; color: #4A3C30; opacity: 0.05; pointer-events: none; line-height: 1;">04</div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center;">
+      <div data-reveal data-parallax style="flex: 1 1 620px; min-width: 340px; aspect-ratio: 1/1; overflow: hidden;">
+        <img src="assets/colleccio-cortina-mar.jpg" alt="Salón con cortina de lino ondeando frente a vistas al mar al atardecer" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; padding: 40px clamp(24px, 6vw, 80px); position: relative; z-index: 2;">
+        <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #A8957F;">{{ collectionEpigraph }}</div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(36px, 5.5vw, 72px); margin: 20px 0 28px; line-height: 1.15; color: #4A3C30;">{{ collectionTitle }}</h2>
+        <div style="font-weight: 300; font-size: 15px; line-height: 1.9; color: #4A3C30; max-width: 420px; white-space: pre-line;">{{ collectionBody }}</div>
+      </div>
+    </div>
+
+    <!-- categories -->
+    <div style="display: flex; flex-wrap: wrap-reverse; align-items: center; margin-top: 100px;">
+      <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; padding: 0 clamp(24px, 6vw, 80px); position: relative; z-index: 2;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; margin: 0 0 20px; color: #4A3C30;">{{ cat1Name }}</h3>
+        <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 2; color: #4A3C30; white-space: pre-line;">{{ cat1List }}</div>
+        <p style="font-size: 14px; line-height: 1.8; color: #A8957F; font-weight: 300; margin-top: 20px; max-width: 380px;">{{ cat1Body }}</p>
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 560px; min-width: 340px; aspect-ratio: 1/1; overflow: hidden;">
+        <img src="assets/cat1-cortines-marmol.jpg" alt="Salón con cortinas de lino traslúcidas y suelo de mármol, vistas al mar" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; margin-top: 100px;">
+      <div data-reveal data-parallax style="flex: 1 1 560px; min-width: 340px; aspect-ratio: 1/1; overflow: hidden;">
+        <img src="assets/cat2-dormitori-lli.jpg" alt="Dormitorio con cortinas de lino traslúcidas ondeando junto a la cama" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; padding: 0 clamp(24px, 6vw, 80px); position: relative; z-index: 2;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; margin: 0 0 20px; color: #4A3C30;">{{ cat2Name }}</h3>
+        <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 2; color: #4A3C30; white-space: pre-line;">{{ cat2List }}</div>
+        <p style="font-size: 14px; line-height: 1.8; color: #A8957F; font-weight: 300; margin-top: 20px; max-width: 380px;">{{ cat2Body }}</p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap-reverse; align-items: center; margin-top: 100px;">
+      <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; padding: 0 clamp(24px, 6vw, 80px); position: relative; z-index: 2;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; margin: 0 0 20px; color: #4A3C30;">{{ cat3Name }}</h3>
+        <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 2; color: #4A3C30; white-space: pre-line;">{{ cat3List }}</div>
+        <p style="font-size: 14px; line-height: 1.8; color: #A8957F; font-weight: 300; margin-top: 20px; max-width: 380px;">{{ cat3Body }}</p>
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 560px; min-width: 340px; aspect-ratio: 1/1; overflow: hidden;">
+        <img src="assets/cat3-bany.jpg" alt="Baño de mármol con toallas y albornoz en tonos crema, cortina de lino junto a la ventana" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; margin-top: 100px;">
+      <div data-reveal data-parallax style="flex: 1 1 560px; min-width: 340px; aspect-ratio: 1/1; overflow: hidden;">
+        <img src="assets/cat4-cuina.jpg" alt="Isla de cocina con mantel de lino, vajilla de cerámica y luz de mediodía" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 380px; min-width: 300px; padding: 0 clamp(24px, 6vw, 80px); position: relative; z-index: 2;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; margin: 0 0 20px; color: #4A3C30;">{{ cat4Name }}</h3>
+        <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 2; color: #4A3C30; white-space: pre-line;">{{ cat4List }}</div>
+        <p style="font-size: 14px; line-height: 1.8; color: #A8957F; font-weight: 300; margin-top: 20px; max-width: 380px;">{{ cat4Body }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PROCES -->
+  <section id="proces" data-screen-label="05 Proces" style="position: relative; background: #EDE5D8; padding: 140px clamp(24px, 6vw, 96px); overflow: hidden;">
+    <div style="position: absolute; left: 50%; top: 40px; transform: translateX(-50%); font-family: 'Cormorant Garamond', serif; font-size: clamp(160px, 22vw, 280px); font-weight: 300; color: #4A3C30; opacity: 0.05; pointer-events: none; line-height: 1;">05</div>
+    <div data-reveal data-parallax style="text-align: center; max-width: 700px; margin: 0 auto 90px; position: relative; z-index: 1;">
+      <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #A8957F;">{{ processEpigraph }}</div>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(36px, 5.5vw, 72px); margin: 20px 0 0; color: #4A3C30;">{{ processTitle }}</h2>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; max-width: 1300px; margin: 0 auto; position: relative;">
+      <div style="position: absolute; top: 40px; left: 0; right: 0; height: 1px; background: #C8A97E; display: none;"></div>
+      <div data-reveal data-parallax style="flex: 1 1 240px; min-width: 220px; position: relative;">
+        <div style="position: absolute; top: -30px; left: 0; font-family: 'Cormorant Garamond', serif; font-size: clamp(100px,14vw,200px); font-weight: 300; color: #4A3C30; opacity: 0.06; pointer-events: none; line-height: 1;">01</div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 32px; margin: 60px 0 16px; color: #4A3C30; position: relative;">{{ step1Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0; position: relative;">{{ step1Body }}</p>
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 240px; min-width: 220px; position: relative;">
+        <div style="position: absolute; top: -30px; left: 0; font-family: 'Cormorant Garamond', serif; font-size: clamp(100px,14vw,200px); font-weight: 300; color: #4A3C30; opacity: 0.06; pointer-events: none; line-height: 1;">02</div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 32px; margin: 60px 0 16px; color: #4A3C30; position: relative;">{{ step2Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0; position: relative;">{{ step2Body }}</p>
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 240px; min-width: 220px; position: relative;">
+        <div style="position: absolute; top: -30px; left: 0; font-family: 'Cormorant Garamond', serif; font-size: clamp(100px,14vw,200px); font-weight: 300; color: #4A3C30; opacity: 0.06; pointer-events: none; line-height: 1;">03</div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 32px; margin: 60px 0 16px; color: #4A3C30; position: relative;">{{ step3Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0; position: relative;">{{ step3Body }}</p>
+      </div>
+      <div data-reveal data-parallax style="flex: 1 1 240px; min-width: 220px; position: relative;">
+        <div style="position: absolute; top: -30px; left: 0; font-family: 'Cormorant Garamond', serif; font-size: clamp(100px,14vw,200px); font-weight: 300; color: #4A3C30; opacity: 0.06; pointer-events: none; line-height: 1;">04</div>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 32px; margin: 60px 0 16px; color: #4A3C30; position: relative;">{{ step4Title }}</h3>
+        <p style="font-size: 14px; line-height: 1.8; color: #4A3C30; font-weight: 300; margin: 0; position: relative;">{{ step4Body }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 CONTACTE -->
+  <section id="contacte" data-screen-label="06 Contacte" style="position: relative; background: #7A6455; padding: 140px clamp(24px, 6vw, 96px); overflow: hidden; display: flex; flex-wrap: wrap; gap: 64px;">
+    <div style="position: absolute; right: 24px; top: 60px; font-family: 'Cormorant Garamond', serif; font-size: clamp(160px, 22vw, 280px); font-weight: 300; color: #FDF9F4; opacity: 0.05; pointer-events: none; line-height: 1;">06</div>
+    <div data-reveal data-parallax style="flex: 1 1 400px; min-width: 300px; position: relative; z-index: 2;">
+      <div style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #FDF9F4; opacity: 0.6;">{{ contactEpigraph }}</div>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(40px, 6vw, 80px); margin: 20px 0 24px; color: #FDF9F4; line-height: 1.1;">{{ contactTitle }}</h2>
+      <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: #FDF9F4; opacity: 0.7; margin: 0 0 48px;">{{ contactSubtitle }}</p>
+      <div style="font-size: 15px; font-weight: 300; line-height: 2.2; color: #FDF9F4; white-space: pre-line;">C/ Almeria, 33
+08320 El Masnou, Barcelona
+
+93 540 89 81
+
+@cortinas_anerol</div>
+    </div>
+    <form data-reveal data-parallax onSubmit="{{ handleSubmit }}" style="flex: 1 1 380px; min-width: 300px; display: flex; flex-direction: column; gap: 36px; position: relative; z-index: 2;">
+      <div>
+        <input type="text" placeholder="{{ formNamePlaceholder }}" style="width: 100%; background: none; border: none; border-bottom: 1px solid rgba(253,249,244,0.3); padding: 10px 0; font-family: Inter, sans-serif; font-size: 15px; font-weight: 300; color: #FDF9F4; outline: none;" />
+      </div>
+      <div>
+        <input type="email" placeholder="{{ formEmailPlaceholder }}" style="width: 100%; background: none; border: none; border-bottom: 1px solid rgba(253,249,244,0.3); padding: 10px 0; font-family: Inter, sans-serif; font-size: 15px; font-weight: 300; color: #FDF9F4; outline: none;" />
+      </div>
+      <div>
+        <textarea placeholder="{{ formMessagePlaceholder }}" rows="3" style="width: 100%; background: none; border: none; border-bottom: 1px solid rgba(253,249,244,0.3); padding: 10px 0; font-family: Inter, sans-serif; font-size: 15px; font-weight: 300; color: #FDF9F4; outline: none; resize: none;"></textarea>
+      </div>
+      <button type="submit" style="align-self: flex-start; background: none; border: none; padding: 0 0 6px; font-family: Inter, sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: #FDF9F4; cursor: pointer; border-bottom: 1px solid #FDF9F4;">{{ formSubmit }}</button>
+    </form>
+  </section>
+
+  <!-- 07 FOOTER -->
+  <footer style="background: #4A3C30; color: #FDF9F4; padding: 80px clamp(24px, 6vw, 96px) 32px;" data-screen-label="07 Footer">
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; max-width: 1200px; margin: 0 auto 60px;">
+      <div style="flex: 1 1 240px;">
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 20px; letter-spacing: 0.35em; margin-bottom: 16px;">ANEROL</div>
+        <div style="font-size: 13px; font-weight: 300; line-height: 1.8; opacity: 0.8;">{{ footerTagline }}<br />El Masnou, Barcelona</div>
+      </div>
+      <div style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; font-weight: 300;">
+        <a href="#nosaltres" style="color: #FDF9F4; opacity: 0.8;">{{ navNosaltres }}</a>
+        <a href="#serveis" style="color: #FDF9F4; opacity: 0.8;">{{ navServeis }}</a>
+        <a href="#colleccio" style="color: #FDF9F4; opacity: 0.8;">{{ navColleccio }}</a>
+        <a href="#proces" style="color: #FDF9F4; opacity: 0.8;">{{ navProces }}</a>
+        <a href="#contacte" style="color: #FDF9F4; opacity: 0.8;">{{ navContacte }}</a>
+      </div>
+      <div style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; font-weight: 300; opacity: 0.8;">
+        <span>{{ legalNotice }}</span>
+        <span>{{ legalPrivacy }}</span>
+        <span>{{ legalCookies }}</span>
+      </div>
+    </div>
+    <div style="text-align: center; font-size: 12px; opacity: 0.6; border-top: 1px solid rgba(253,249,244,0.15); padding-top: 24px;">{{ footerCopyright }}</div>
+    <div style="text-align: center; font-size: 11px; opacity: 0.3; margin-top: 10px;">{{ footerCredit }}</div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLanguage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;ca&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;ca&quot;,&quot;es&quot;],&quot;section&quot;:&quot;Idioma&quot;},&quot;enableCustomCursor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interacción&quot;},&quot;enableParallax&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interacción&quot;}}">
+const T = {
+  ca: {
+    navNosaltres: 'Nosaltres', navServeis: 'Serveis', navColleccio: 'Col·lecció', navProces: 'Procés', navContacte: 'Contacte',
+    heroTitle: "L'art de vestir els espais.",
+    heroSubtitle: 'TÈXTILS PER A LA LLAR · EL MASNOU · DES DEL 2004',
+    heroCta: 'Descobreix Anerol',
+    aboutEpigraph: 'Nosaltres',
+    aboutTitle: 'Més de vint anys\ncuidant cada detall.',
+    aboutBody: "A Anerol no venem tèxtils. T'acompanyem a trobar la solució que millor encaixa amb la teva llar, la teva llum i la teva manera de viure.\n\nDes del 2004, hem ajudat centenars de clients a transformar els seus espais amb materials de qualitat, un tracte proper i un resultat que dura en el temps.\n\nLa confiança es construeix dia a dia, amb feina ben feta.",
+    servicesEpigraph: 'Serveis',
+    servicesTitle: 'Cada espai, una solució a mida.',
+    servicesSubtitle: "El nostre valor està en acompanyar-te durant tot el procés, des de la primera conversa fins a l'últim detall.",
+    service1Title: 'Tracte personalitzat',
+    service1Body: "T'escoltem, proposem i ajustem cada detall fins que el resultat sigui exactament el que necessites. Aquí no hi ha solucions estàndard.",
+    service2Title: 'Mesura a domicili',
+    service2Body: "Ens desplacem a casa teva per prendre les mesures exactes i assegurar-nos que tot encaixi a la perfecció des del primer moment.",
+    service3Title: 'Instal·lació professional',
+    service3Body: "Ens encarreguem del muntatge perquè tu no hagis de preocupar-te de res. Cuidem cada detall per garantir un acabat impecable.",
+    collectionEpigraph: 'Col·lecció',
+    collectionTitle: 'Tot el que necessita\nuna llar ben vestida.',
+    collectionBody: "Les cortines marquen el caràcter d'un espai. Els tèxtils que les acompanyen defineixen com es viu. A Anerol trobaràs tot allò que necessites per completar cada racó de la teva llar, des de les finestres fins al llit, des del bany fins a la taula.",
+    cat1Name: 'Cortines i Estors',
+    cat1List: 'Cortines a mida — Estors enrollables\nEstors de paquet — Panells japonesos\nVenecianes — Sistemes motoritzats',
+    cat1Body: 'Cada solució es dissenya en funció de la llum que vols filtrar, l\'ambient que vols crear i l\'estil de la teva llar.',
+    cat2Name: 'Roba de Llit',
+    cat2List: 'Llençols a mida — Fundes nòrdiques\nCoixins decoratius — Colxes\nFundes de coixí',
+    cat2Body: 'El descans també es dissenya. Materials naturals i acabats impecables per als moments que més importen.',
+    cat3Name: 'Bany',
+    cat3List: 'Tovalloles — Albornoços\nTapis de bany',
+    cat3Body: 'Cada peça pensada per convertir el bany en un espai de tranquil·litat i cura personal.',
+    cat4Name: 'Cuina i Llar',
+    cat4List: 'Estovalles — Tovallons\nMenatge de cuina — Accessoris de taula',
+    cat4Body: 'Els detalls que fan que una taula sigui un lloc on voler seure, i una cuina, un lloc on voler cuinar.',
+    processEpigraph: 'Com treballem',
+    processTitle: 'Del primer contacte al resultat final.',
+    step1Title: 'Primera consulta',
+    step1Body: "Explica'ns el teu espai. T'escoltarem sense pressa i et proposarem les opcions que millor s'adapten a la teva llar i al teu pressupost.",
+    step2Title: 'Visita i mesura',
+    step2Body: "Anem a casa teva, prenem mesures amb precisió i confirmem tots els detalls tècnics sobre el terreny. Res queda a l'atzar.",
+    step3Title: 'Fabricació a mida',
+    step3Body: 'Elaborem els teus tèxtils amb els materials que has triat. Cada peça, pensada i fabricada per al teu espai concret. Sense presses, amb cura.',
+    step4Title: "Instal·lació i entrega",
+    step4Body: 'Ho muntem tot nosaltres. Quan marxem, el teu espai ja és diferent. Garantim el resultat i resolem qualsevol ajust que calgui.',
+    contactEpigraph: 'Contacte',
+    contactTitle: 'Parlem del\nteu espai.',
+    contactSubtitle: 'Cada projecte comença amb una conversa.',
+    formNamePlaceholder: 'Nom', formEmailPlaceholder: 'Correu electrònic', formMessagePlaceholder: 'Missatge',
+    formSubmit: "Envia'ns un missatge",
+    footerTagline: 'Complements per a la llar',
+    legalNotice: 'Avís Legal', legalPrivacy: 'Política de Privacitat', legalCookies: 'Cookies',
+    footerCopyright: '© 2026 Anerol — Tots els drets reservats',
+    footerCredit: 'Dissenyat amb cura · El Masnou · Barcelona'
+  },
+  es: {
+    navNosaltres: 'Nosotros', navServeis: 'Servicios', navColleccio: 'Colección', navProces: 'Proceso', navContacte: 'Contacto',
+    heroTitle: 'El arte de vestir los espacios.',
+    heroSubtitle: 'TEXTILES PARA EL HOGAR · EL MASNOU · DESDE 2004',
+    heroCta: 'Descubre Anerol',
+    aboutEpigraph: 'Nosotros',
+    aboutTitle: 'Más de veinte años\ncuidando cada detalle.',
+    aboutBody: 'En Anerol no vendemos textiles. Te acompañamos a encontrar la solución que mejor encaja con tu hogar, tu luz y tu forma de vivir.\n\nDesde 2004, hemos ayudado a cientos de clientes a transformar sus espacios con materiales de calidad, un trato cercano y un resultado que perdura en el tiempo.\n\nLa confianza se construye día a día, con trabajo bien hecho.',
+    servicesEpigraph: 'Servicios',
+    servicesTitle: 'Cada espacio, una solución a medida.',
+    servicesSubtitle: 'Nuestro valor está en acompañarte durante todo el proceso, desde la primera conversación hasta el último detalle.',
+    service1Title: 'Trato personalizado',
+    service1Body: 'Te escuchamos, proponemos y ajustamos cada detalle hasta que el resultado sea exactamente lo que necesitas. Aquí no hay soluciones estándar.',
+    service2Title: 'Medición a domicilio',
+    service2Body: 'Nos desplazamos a tu hogar para tomar las medidas exactas y asegurarnos de que todo encaje a la perfección desde el primer momento.',
+    service3Title: 'Instalación profesional',
+    service3Body: 'Nos encargamos del montaje para que tú no tengas que preocuparte de nada. Cuidamos cada detalle para garantizar un acabado impecable.',
+    collectionEpigraph: 'Colección',
+    collectionTitle: 'Todo lo que necesita\nun hogar bien vestido.',
+    collectionBody: 'Las cortinas marcan el carácter de un espacio. Los textiles que las acompañan definen cómo se vive. En Anerol encontrarás todo lo que necesitas para completar cada rincón de tu hogar, desde las ventanas hasta la cama, desde el baño hasta la mesa.',
+    cat1Name: 'Cortinas y Estores',
+    cat1List: 'Cortinas a medida — Estores enrollables\nEstores de paqueto — Paneles japoneses\nVenecianas — Sistemas motorizados',
+    cat1Body: 'Cada solución se diseña en función de la luz que quieres filtrar, el ambiente que quieres crear y el estilo de tu hogar.',
+    cat2Name: 'Ropa de Cama',
+    cat2List: 'Sábanas a medida — Fundas nórdicas\nCojines decorativos — Colchas\nFundas de almohada',
+    cat2Body: 'El descanso también se diseña. Materiales naturales y acabados impecables para los momentos que más importan.',
+    cat3Name: 'Baño',
+    cat3List: 'Toallas — Albornoces\nTapetes de baño',
+    cat3Body: 'Cada pieza pensada para convertir el baño en un espacio de tranquilidad y cuidado personal.',
+    cat4Name: 'Cocina y Hogar',
+    cat4List: 'Manteles — Servilletas\nMenaje de cocina — Accesorios de mesa',
+    cat4Body: 'Los detalles que hacen que una mesa sea un lugar donde querer sentarse, y una cocina, un lugar donde querer cocinar.',
+    processEpigraph: 'Cómo trabajamos',
+    processTitle: 'Del primer contacto al resultado final.',
+    step1Title: 'Primera consulta',
+    step1Body: 'Cuéntanos tu espacio. Te escucharemos sin prisa y propondremos las opciones que mejor se adapten a tu hogar y a tu presupuesto.',
+    step2Title: 'Visita y medición',
+    step2Body: 'Vamos a tu hogar, tomamos medidas con precisión y confirmamos todos los detalles técnicos in situ. Nada queda al azar.',
+    step3Title: 'Fabricación a medida',
+    step3Body: 'Elaboramos tus textiles con los materiales elegidos. Cada pieza, pensada y fabricada para tu espacio concreto. Sin prisas, con cuidado.',
+    step4Title: 'Instalación y entrega',
+    step4Body: 'Lo montamos todo nosotros. Cuando nos vamos, tu espacio ya es diferente. Garantizamos el resultado y resolvemos cualquier ajuste que haga falta.',
+    contactEpigraph: 'Contacto',
+    contactTitle: 'Hablemos de\ntu espacio.',
+    contactSubtitle: 'Cada proyecto empieza con una conversación.',
+    formNamePlaceholder: 'Nombre', formEmailPlaceholder: 'Email', formMessagePlaceholder: 'Mensaje',
+    formSubmit: 'Envíanos un mensaje',
+    footerTagline: 'Complementos para el hogar',
+    legalNotice: 'Aviso Legal', legalPrivacy: 'Política de Privacidad', legalCookies: 'Cookies',
+    footerCopyright: '© 2026 Anerol — Todos los derechos reservados',
+    footerCredit: 'Diseñado con cuidado · El Masnou · Barcelona'
+  }
+};
+
+const SECTION_IDS = ['nosaltres', 'serveis', 'colleccio', 'proces', 'contacte'];
+
+class Component extends DCLogic {
+  state = {
+    lang: (this.props.defaultLanguage === 'es') ? 'es' : 'ca',
+    isMobile: false,
+    isDesktop: true,
+    menuOpen: false,
+    scrolled: false,
+    activeSection: null
+  };
+
+  rootRef = React.createRef();
+  cursorRef = React.createRef();
+  heroImgRef = React.createRef();
+
+  componentDidMount() {
+    this.updateBreakpoints();
+    window.addEventListener('resize', this.updateBreakpoints);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+
+    if (this.props.enableCustomCursor !== false && this.cursorRef.current) {
+      this.mouse = { x: 0, y: 0 };
+      this.pos = { x: 0, y: 0 };
+      this.onMouseMove = (e) => { this.mouse.x = e.clientX; this.mouse.y = e.clientY; };
+      window.addEventListener('mousemove', this.onMouseMove);
+      const loop = () => {
+        this.pos.x += (this.mouse.x - this.pos.x) * 0.15;
+        this.pos.y += (this.mouse.y - this.pos.y) * 0.15;
+        if (this.cursorRef.current) {
+          this.cursorRef.current.style.transform = `translate(${this.pos.x}px, ${this.pos.y}px) translate(-50%,-50%)`;
+        }
+        this.rafId = requestAnimationFrame(loop);
+      };
+      this.rafId = requestAnimationFrame(loop);
+
+      this.onOver = (e) => {
+        const img = e.target.closest && e.target.closest('[data-parallax], header a, form button');
+        if (!this.cursorRef.current) return;
+        if (img && (img.hasAttribute('data-parallax'))) {
+          this.cursorRef.current.style.width = '48px';
+          this.cursorRef.current.style.height = '48px';
+          this.cursorRef.current.textContent = 'VER →';
+        } else {
+          this.cursorRef.current.style.width = '10px';
+          this.cursorRef.current.style.height = '10px';
+          this.cursorRef.current.textContent = '';
+        }
+      };
+      if (this.rootRef.current) this.rootRef.current.addEventListener('mouseover', this.onOver);
+    }
+
+    if (window.gsap && this.rootRef.current) {
+      window.gsap.registerPlugin(window.ScrollTrigger);
+
+      // Elements needing both reveal and parallax get the animations split onto
+      // separate nodes (a GSAP tween per node) so the two tweens don't fight
+      // over the same transform/opacity.
+      const dualEls = Array.from(this.rootRef.current.querySelectorAll('[data-reveal][data-parallax]'));
+      dualEls.forEach((el) => {
+        const inner = document.createElement('div');
+        while (el.firstChild) inner.appendChild(el.firstChild);
+        el.appendChild(inner);
+        el.removeAttribute('data-parallax');
+        inner.setAttribute('data-parallax', '');
+      });
+
+      const els = this.rootRef.current.querySelectorAll('[data-reveal]');
+      els.forEach((el, i) => {
+        window.gsap.fromTo(el, { opacity: 0, y: 40 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', delay: (i % 3) * 0.15,
+          scrollTrigger: { trigger: el, start: 'top 88%' }
+        });
+      });
+      if (this.props.enableParallax !== false) {
+        const parEls = this.rootRef.current.querySelectorAll('[data-parallax]');
+        parEls.forEach((el) => {
+          window.gsap.to(el, {
+            yPercent: 8, ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+          });
+        });
+        const parImgs = this.rootRef.current.querySelectorAll('[data-parallax] img');
+        parImgs.forEach((img) => {
+          window.gsap.fromTo(img, { scale: 1 }, {
+            scale: 1.06, ease: 'none',
+            scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
+          });
+        });
+      }
+
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) this.setState({ activeSection: entry.target.id });
+        });
+      }, { rootMargin: '-40% 0px -50% 0px' });
+      SECTION_IDS.forEach((id) => {
+        const el = this.rootRef.current.querySelector('#' + id);
+        if (el) this.observer.observe(el);
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateBreakpoints);
+    window.removeEventListener('scroll', this.onScroll);
+    if (this.onMouseMove) window.removeEventListener('mousemove', this.onMouseMove);
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+    if (this.observer) this.observer.disconnect();
+  }
+
+  updateBreakpoints = () => {
+    const w = window.innerWidth;
+    this.setState({ isMobile: w < 768, isDesktop: w >= 768 });
+  };
+
+  onScroll = () => {
+    const scrolled = window.scrollY > 80;
+    if (scrolled !== this.state.scrolled) this.setState({ scrolled });
+  };
+
+  toggleMenu = () => this.setState((s) => ({ menuOpen: !s.menuOpen }));
+  setLangCa = () => this.setState({ lang: 'ca' });
+  setLangEs = () => this.setState({ lang: 'es' });
+  handleSubmit = (e) => e.preventDefault();
+
+  renderVals() {
+    const t = T[this.state.lang];
+    const scrolled = this.state.scrolled;
+    const nav = (id) => {
+      const active = this.state.activeSection === id;
+      if (scrolled) return active ? '#4A3C30' : '#A8957F';
+      return active ? '#FDF9F4' : 'rgba(253,249,244,0.7)';
+    };
+    return {
+      rootRef: this.rootRef,
+      cursorRef: this.cursorRef,
+      heroImgRef: this.heroImgRef,
+      isDesktop: this.props.enableCustomCursor !== false && this.state.isDesktop && !this.state.isMobile,
+      isMobile: this.state.isMobile,
+      isDesktopNav: !this.state.isMobile,
+      cursorCss: (this.props.enableCustomCursor !== false && this.state.isDesktop && !this.state.isMobile) ? 'none' : 'auto',
+      headerBg: this.state.scrolled ? '#FDF9F4' : 'transparent',
+      headerShadow: this.state.scrolled ? '0 1px 0 #EDE5D8' : 'none',
+      logoColor: this.state.scrolled ? '#4A3C30' : '#FDF9F4',
+      menuOpen: this.state.menuOpen,
+      toggleMenu: this.toggleMenu,
+      setLangCa: this.setLangCa,
+      setLangEs: this.setLangEs,
+      langCaColor: this.state.lang === 'ca' ? (this.state.scrolled ? '#4A3C30' : '#FDF9F4') : (this.state.scrolled ? '#A8957F' : 'rgba(253,249,244,0.7)'),
+      langEsColor: this.state.lang === 'es' ? (this.state.scrolled ? '#4A3C30' : '#FDF9F4') : (this.state.scrolled ? '#A8957F' : 'rgba(253,249,244,0.7)'),
+      handleSubmit: this.handleSubmit,
+      navNosaltresColor: nav('nosaltres'),
+      navServeisColor: nav('serveis'),
+      navColleccioColor: nav('colleccio'),
+      navProcesColor: nav('proces'),
+      navContacteColor: nav('contacte'),
+      ...t
+    };
+  }
+}
+
+</script>
+</body>
+</html>
